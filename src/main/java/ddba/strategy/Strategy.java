@@ -6,4 +6,5 @@ package ddba.strategy;
 public interface Strategy {
 	boolean canExecute();
 	Context execute();
+
 }

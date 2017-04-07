@@ -105,7 +105,6 @@ public class InterestPercentage {
 			return interest;
 		}
 
-
 		/**
 		 * it calculates the interest which has to be paid as a fee for the period od time between deadline and
 		 * be late actual date of payment.
@@ -118,41 +117,54 @@ public class InterestPercentage {
 		 * @return
 		 */
 		public static List<Output> calculateInterest(ArrayDeque<Invoice> invoice, ArrayDeque<Payment> payments) {
+			List<Invoice> invoiceCopy = new LinkedList<>(invoice);
+			List<Payment> paymentsCopy = new LinkedList<>(payments);
+
 			List<Output> outputs = new LinkedList<>();
-			for (int i = 0; i < invoice.size(); ) {
+			for (int i = 0; i < invoiceCopy.size(); i++) {
 				double invoiceTemp = invoice.getFirst().getInvoice();
 				double diff = 0.0;
-				for (int j = 0; j < payments.size(); ) {
+				for (int j = 0; j < paymentsCopy.size(); j++) {
 
-					LocalDate date = decide(invoice.getFirst().getDeadlineDate(), payments.getFirst().getPaymentDate());
+					LocalDate date = decide(invoiceCopy.get(i).getDeadlineDate(), paymentsCopy.get(j).getPaymentDate());
 					if (date != null) {
 						Payment payment = new Payment(date, 0.0);
-						payments.addFirst(payment);
+						paymentsCopy.add(j, payment);
 					}
-					diff = invoiceTemp - payments.getFirst().getPayment();
+					diff = invoiceTemp - paymentsCopy.get(j).getPayment();
 
 					if (diff < 0.0) {
 						break;
 					}
-					//if (invoice.getFirst().getInvoiceTitle().equals(payments.getFirst().getPaymentTitle())) {
-					Payment payment = payments.pollFirst();
+					if (invoiceCopy.get(i).getInvoiceTitle().equals(paymentsCopy.get(j).getPaymentTitle())) {
+						Payment payment = paymentsCopy.get(j);
+						paymentsCopy.remove(j);
+						j = -1;
 
-					if (diff == invoiceTemp) {
-						Output output = setupOutput(invoice.getFirst(), payment, invoiceTemp, true);
+						if (diff == invoiceTemp) {
+							Output output = setupOutput(invoice.getFirst(), payment, invoiceTemp, true);
+							outputs.add(output);
+							double invoiceCost = invoiceCopy.get(i).getInvoice();
+							invoiceCopy.remove(i);
+							invoiceCopy.add(new Invoice(date, invoiceCost));
+							break;
+						}
+
+						Output output = setupOutput(invoiceCopy.get(i), payment, invoiceTemp, false);
 						outputs.add(output);
-						double invoiceCost = invoice.getFirst().getInvoice();
-						invoice.removeFirst();
-						invoice.add(new Invoice(date, invoiceCost));
-						break;
+						invoiceTemp = invoiceTemp - payment.getPayment();
+						//	}
 					}
-
-					Output output = setupOutput(invoice.getFirst(), payment, invoiceTemp, false);
-					outputs.add(output);
-					invoiceTemp = invoiceTemp - payment.getPayment();
-					//	}
+					if (paymentsCopy.size() - 1 == j && paymentsCopy.size() > 0 && invoiceCopy.size() > 0) {
+						j = -1;
+						//	break;
+					}
 				}
-				if (diff < 0.0 || diff != invoiceTemp) {
-					invoice.removeFirst();
+				if (diff != invoiceTemp && diff < 0.0) {
+					invoiceCopy.remove(i);
+				}
+				if (invoiceCopy.size() - 1 == i && invoiceCopy.size() > 0 && paymentsCopy.size() > 0) {
+					i = -1;
 				}
 			}
 			return outputs;
