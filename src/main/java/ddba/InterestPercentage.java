@@ -105,33 +105,6 @@ public class InterestPercentage {
 			return interest;
 		}
 
-//		/**
-//		 * it calculates the interest which has to be paid as a fee for the period od time between deadline and
-//		 * be late actual date of payment
-//		 *
-//		 * @param invoice
-//		 * @param payments date of the payment and amount
-//		 * @return
-//		 */
-//		public static List<Output> calculateInterest(Invoice invoice, List<Payment> payments) {
-//			List<Output> outputs = new LinkedList<>();
-//			double invoiceTemp = invoice.getInvoice();
-//			for (int i = 0; i < payments.size(); i++) {
-//				Output output = new Output();
-//
-//				double diff = 0;
-//				diff = invoiceTemp - payments.get(i).getPayment();
-//				if (diff >= 0.0) {
-//					output.setDaysOverDeadline(daysOverDeadline(invoice.getDeadlineDate(), payments.get(i).getPaymentDate()));
-//					output.setInterestPercentage(decideInterestPercentage(payments.get(i).getPaymentDate()));
-//					output.setInterest(calculateInterest(invoice.getDeadlineDate(), invoiceTemp, payments.get(i).getPaymentDate()));
-//					outputs.add(output);
-//					invoiceTemp = invoiceTemp - payments.get(i).getPayment();
-//				}
-//			}
-//
-//			return outputs;
-//		}
 
 		/**
 		 * it calculates the interest which has to be paid as a fee for the period od time between deadline and
@@ -194,17 +167,18 @@ public class InterestPercentage {
 		 *
 		 * @param invoice
 		 * @param payments
+		 * @param now
 		 * @return
 		 */
-		public static List<Output> calculateInterest(ArrayDeque<Invoice> invoice, ArrayDeque<Payment> payments, LocalDate now) {
+		public static List<Output> calculateInteresTt(ArrayDeque<Invoice> invoice, ArrayDeque<Payment> payments, LocalDate now) {
 			List<Invoice> invoiceCopy = new LinkedList<>(invoice);
 			List<Payment> paymentsCopy = new LinkedList<>(payments);
 
 			List<Output> outputs = new LinkedList<>();
-			for (int i = 0; !invoiceCopy.isEmpty() && i < invoice.size() && !paymentsCopy.isEmpty(); ) {
+			for (int i = 0; i < invoiceCopy.size(); i++) {
 				double invoiceTemp = invoiceCopy.get(i).getInvoice();
 				double diff = 0.0;
-				for (int j = 0; j < paymentsCopy.size(); ) {
+				for (int j = 0; j < paymentsCopy.size(); j++) {
 
 					LocalDate date = decide(invoiceCopy.get(i).getDeadlineDate(), paymentsCopy.get(j).getPaymentDate());
 					if (date != null) {
@@ -219,6 +193,7 @@ public class InterestPercentage {
 					if (invoiceCopy.get(i).getInvoiceTitle().equals(paymentsCopy.get(j).getPaymentTitle())) {
 						Payment payment = paymentsCopy.get(j);
 						paymentsCopy.remove(j);
+						j = -1;
 
 						if (diff == invoiceTemp) {
 							Output output = setupOutput(invoiceCopy.get(i), payment, invoiceTemp, true);
@@ -232,22 +207,21 @@ public class InterestPercentage {
 						Output output = setupOutput(invoiceCopy.get(i), payment, invoiceTemp, false);
 						outputs.add(output);
 						invoiceTemp = invoiceTemp - payment.getPayment();
-					} else {
-						j++;
-						//continue;
-						//	i++;
+					}
+					if (paymentsCopy.size() - 1 == j && paymentsCopy.size() > 0 && invoiceCopy.size() > 0) {
+						j = -1;
 						//	break;
 					}
 				}
 				if (diff != invoiceTemp && diff < 0.0) {
 					invoiceCopy.remove(i);
 				}
+				if (invoiceCopy.size() - 1 == i && invoiceCopy.size() > 0 && paymentsCopy.size() > 0) {
+					i = -1;
+				}
 			}
 			return outputs;
 		}
-
-
-
 
 		private static Output setupOutput(Invoice invoice, Payment payment, double invoiceTemp, boolean flag) {
 			Output output = new Output();

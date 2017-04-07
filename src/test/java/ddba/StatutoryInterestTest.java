@@ -3,9 +3,12 @@ package ddba;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import org.assertj.core.api.Assertions;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.util.ArrayDeque;
 import java.util.Arrays;
@@ -68,19 +71,23 @@ public class StatutoryInterestTest {
 		Assertions.assertThat(interest).isEqualTo(23.59);
 	}
 
-//	@Test
-//	public void shouldReturnTwoInterestSinceInvoicePaidInTwoPartsBothOverDeadline() {
-//		Invoice invoice = new Invoice(LocalDate.of(2000, 2, 10), 1000);
-//		List<Payment> payments =
-//				new LinkedList<>(Arrays.asList(new Payment(LocalDate.of(2000, 2, 20), 500),
-//						new Payment(LocalDate.of(2000, 3, 20), 500)));
-//
-//		List<Output> outputs;
-//		outputs = InterestPercentage.InterestCalculator.calculateInterest(invoice, payments);
-//
-//		Assertions.assertThat(outputs.get(0).getInterest()).isEqualTo(5.75);
-//		Assertions.assertThat(outputs.get(1).getInterest()).isEqualTo(11.22);
-//	}
+	@Test
+	public void shouldReturnTwoInterestSinceInvoicePaidInTwoPartsBothOverDeadline() {
+		ArrayDeque<Invoice> invoices = new ArrayDeque<>(
+				Arrays.asList(
+						new Invoice(LocalDate.of(2000, 1, 20), 1000)));
+		ArrayDeque<Payment> payments=
+				new ArrayDeque<>(Arrays.asList(new Payment(LocalDate.of(2000, 2, 20), 500),
+						new Payment(LocalDate.of(2000, 3, 20), 500)));
+
+		List<Output> outputs;
+		outputs = InterestPercentage.InterestCalculator.calculateInteresTt(invoices, payments,null);
+
+		Assertions.assertThat(outputs.stream().map(Output::getInterestPercentage)).containsExactly(21.0, 21.0);
+		Assertions.assertThat(outputs.stream().map(Output::getInterest)).containsExactly(17.84, 17.26);
+		Assertions.assertThat(outputs.stream().map(Output::getDaysOverDeadline)).containsExactly(31L, 60L);
+
+	}
 
 	@Test
 	public void shouldReturnFourInterestsInterestsSinceArePaidAfterDeadline() {
@@ -96,7 +103,7 @@ public class StatutoryInterestTest {
 						new Payment(LocalDate.of(2000, 5, 12), 500)));
 
 		List<Output> outputs;
-		outputs = InterestPercentage.InterestCalculator.calculateInterest(invoices, payments,null);
+		outputs = InterestPercentage.InterestCalculator.calculateInteresTt(invoices, payments,null);
 
 		Assertions.assertThat(outputs.stream().map(Output::getInterestPercentage)).containsExactly(21.0, 21.0, 21.0, 21.0);
 		Assertions.assertThat(outputs.stream().map(Output::getInterest)).containsExactly(5.75, 11.22, 11.51, 6.33);
@@ -113,30 +120,56 @@ public class StatutoryInterestTest {
 				Arrays.asList(new Payment(LocalDate.of(2000, 12, 10), 1000)));
 
 		List<Output> outputs;
-		outputs = InterestPercentage.InterestCalculator.calculateInterest(invoices, payments,null);
+		outputs = InterestPercentage.InterestCalculator.calculateInteresTt(invoices, payments,null);
 
 		Assertions.assertThat(outputs.stream().map(Output::getInterestPercentage)).containsExactly(21.0, 30.0);
 	}
 
 	@Test
-	public void shouldNOTPaymentBeDoneForTheParticularInvoiceSinceTitleDoesNotMatch() {
+	public void shouldNotBeAnyInterestIfPaymentWasOnTime() {
 		ArrayDeque<Invoice> invoices = new ArrayDeque<>(
 				Arrays.asList(new Invoice("A rent", LocalDate.of(2000, 1, 10), 1000)));
 		ArrayDeque<Payment> payments = new ArrayDeque<>(
 				Arrays.asList(
-						new Payment("A rent", LocalDate.of(2000, 1, 11), 1000)
+						new Payment("A rent", LocalDate.of(2000, 1, 10), 1000)
 				)
 		);
+		List<Output> outputs = InterestPercentage.InterestCalculator.calculateInteresTt(invoices, payments,null);
 
-		List<Output> outputs = InterestPercentage.InterestCalculator.calculateInterest(invoices, payments,null);
-
-		outputs.forEach(output -> System.out.println(output.getDaysOverDeadline()));
-		Assertions.assertThat(outputs).isEmpty();
-
+		Assertions.assertThat(outputs.stream().map(Output::getInterest)).containsExactly(0.0);
 	}
 
 	@Test
-	public void test() {
+	public void shouldPaymentBeDoneForTheParticularInvoiceSinceTitleDoesMatch() {
+		ArrayDeque<Invoice> invoices = new ArrayDeque<>(
+				Arrays.asList(new Invoice("Car rent", LocalDate.of(2000, 1, 10), 1000)));
+		ArrayDeque<Payment> payments = new ArrayDeque<>(
+				Arrays.asList(
+						new Payment("Car rent", LocalDate.of(2000, 1, 11), 1000)
+				)
+		);
+
+		List<Output> outputs = InterestPercentage.InterestCalculator.calculateInteresTt(invoices, payments,null);
+		Assertions.assertThat(outputs.stream().map(Output::getInterest)).containsExactly(0.58);
+	}
+
+	@Test
+	@Ignore
+	public void shouldNOTBePaymentDoneForTheParticularInvoiceSinceTitleDoesNotMatch() {
+		ArrayDeque<Invoice> invoices = new ArrayDeque<>(
+				Arrays.asList(new Invoice("A rent", LocalDate.of(2000, 1, 10), 1000)));
+		ArrayDeque<Payment> payments = new ArrayDeque<>(
+				Arrays.asList(
+						new Payment("B rent", LocalDate.of(2000, 1, 11), 1000)
+				)
+		);
+
+		List<Output> outputs = InterestPercentage.InterestCalculator.calculateInteresTt(invoices, payments,null);
+		Assertions.assertThat(outputs.stream().map(Output::getInterest)).containsExactly(0.58);
+	}
+
+	@Test
+	public void test() throws NoSuchMethodException, ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException {
 		LocalDate of = LocalDate.of(2000, 2, 10);
 		if (of.isEqual(LocalDate.of(2000, 2, 10))) {
 			System.out.println("t");
@@ -144,5 +177,14 @@ public class StatutoryInterestTest {
 		System.out.println("f");
 		System.out.println(DAYS.between(LocalDate.of(2000, 1, 10), LocalDate.of(2000, 1, 10)));
 		System.out.println(DAYS.between(LocalDate.of(2000, 11, 1), LocalDate.of(2000, 12, 10)));
+
+		Class cls = Class.forName("ddba.Main");
+		Object obj = cls.newInstance();
+		Method method = cls.getMethod("getName", null);
+		method.invoke(obj, null);
+
+		method = cls.getDeclaredMethod("getName", String.class);
+		method.setAccessible(true);
+		method.invoke(obj,new String("param"));
 	}
 }
