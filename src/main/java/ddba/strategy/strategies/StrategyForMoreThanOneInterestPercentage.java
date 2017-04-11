@@ -16,7 +16,7 @@ import static ddba.strategy.InterestCalculationStrategy.datesOfChangedInterestRa
 /**
  * Created by ddba on 10/04/2017.
  */
-public class StrategyD implements Strategy {
+public class StrategyForMoreThanOneInterestPercentage implements Strategy {
 
 	@Override
 	public boolean canExecute(Context context) {
@@ -54,6 +54,8 @@ public class StrategyD implements Strategy {
 
 		return new Tuple(newContext, outputs);
 	}
+
+
 
 	/**
 	 * It creates fake payments to generate proper outputs when interest percentage is being changed

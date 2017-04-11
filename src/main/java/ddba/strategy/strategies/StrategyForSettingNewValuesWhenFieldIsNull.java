@@ -11,10 +11,8 @@ import java.util.ArrayDeque;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by ddba on 07/04/2017.
- */
-public class StrategyA implements Strategy {
+
+public class StrategyForSettingNewValuesWhenFieldIsNull implements Strategy {
 
 	private ArrayDeque<Invoice> invoiceCopy;
 	private ArrayDeque<Payment> paymentsCopy;
@@ -23,16 +21,16 @@ public class StrategyA implements Strategy {
 		return invoiceCopy;
 	}
 
-	public void setInvoiceCopy(ArrayDeque<Invoice> invoice) {
-		this.invoiceCopy = new ArrayDeque<>(invoice);
-	}
 
 	public ArrayDeque<Payment> getPaymentsCopy() {
 		return paymentsCopy;
 	}
 
-	public void setPaymentsCopy(ArrayDeque<Payment> payments) {
-		this.paymentsCopy = new ArrayDeque<>(payments);
+
+	public StrategyForSettingNewValuesWhenFieldIsNull(ArrayDeque<Invoice> invoiceCopy, ArrayDeque<Payment> paymentsCopy) {
+		this.invoiceCopy = new ArrayDeque<>(invoiceCopy);
+
+		this.paymentsCopy =  new ArrayDeque<>(paymentsCopy);;
 	}
 
 	@Override

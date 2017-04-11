@@ -1,8 +1,6 @@
 package ddba;
 
-/**
- * Created by ddba on 30/03/2017.
- */
+
 public class Output {
 	private String period;
 	private long daysOverDeadline;

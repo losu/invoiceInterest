@@ -10,15 +10,14 @@ import java.util.List;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
-/**
- * Created by ddba on 30/03/2017.
- */
+
 @Component
 public class InterestPercentage {
-	static List<StatutoryInterest> listOFInterest;
+	private static List<StatutoryInterest> listOFInterest;
 
 	public InterestPercentage() {
-		this.listOFInterest = new LinkedList<>();
+		listOFInterest = new LinkedList<>();
+
 		listOFInterest.add(new StatutoryInterest(LocalDate.of(1990, 1, 1), 720.00));
 		listOFInterest.add(new StatutoryInterest(LocalDate.of(1990, 2, 1), 480.00));
 		listOFInterest.add(new StatutoryInterest(LocalDate.of(1990, 3, 1), 216.00));

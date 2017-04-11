@@ -2,9 +2,6 @@ package ddba;
 
 import java.time.LocalDate;
 
-/**
- * Created by ddba on 29/03/2017.
- */
 public class Payment {
 
 	private String paymentTitle;
@@ -15,7 +12,6 @@ public class Payment {
 		this.paymentDate = paymentDate;
 		this.payment = payment;
 		this.paymentTitle = "";
-
 	}
 
 	public Payment(String paymentTitle, LocalDate paymentDate, double payment) {

@@ -167,7 +167,7 @@ public class StatutoryInterestTest {
 	}
 
 //	@Test
-//	public void StrategyD() {
+//	public void StrategyForMoreThanOneInterestPercentage() {
 //		ArrayDeque<Invoice> invoices = new ArrayDeque<>(
 //				Arrays.asList(new Invoice("A rent", LocalDate.of(2000, 1, 10), 1000)));
 //		ArrayDeque<Payment> payments = new ArrayDeque<>(

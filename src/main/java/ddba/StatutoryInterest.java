@@ -2,9 +2,6 @@ package ddba;
 
 import java.time.LocalDate;
 
-/**
- * Created by ddba on 31/03/2017.
- */
 public class StatutoryInterest {
 
 	private LocalDate date;
@@ -19,7 +16,7 @@ public class StatutoryInterest {
 		return date;
 	}
 
-	public double getInterestPercentage() {
+	double getInterestPercentage() {
 		return interestPercentage;
 	}
 }

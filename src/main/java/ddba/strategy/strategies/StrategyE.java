@@ -7,20 +7,29 @@ import ddba.strategy.Context;
 import ddba.strategy.Strategy;
 
 import java.time.LocalDate;
+import java.util.ArrayDeque;
 import java.util.LinkedList;
 import java.util.List;
 
 import static ddba.InterestPercentage.InterestCalculator.setupOutput;
 import static ddba.strategy.InterestCalculationStrategy.datesOfChangedInterestRate;
 
-/**
- * Created by ddba on 10/04/2017.
- */
 public class StrategyE implements Strategy {
+
+	private ArrayDeque<Payment> paymentsCopy;
 
 	private LocalDate now;
 
-	public void setNow(LocalDate now) {
+	private LocalDate getNow() {
+		return now;
+	}
+
+	public ArrayDeque<Payment> getPaymentsCopy() {
+		return paymentsCopy;
+	}
+
+	public StrategyE(ArrayDeque<Payment> paymentsCopy, LocalDate now) {
+		this.paymentsCopy = new ArrayDeque<>(paymentsCopy);
 		this.now = now;
 	}
 
@@ -35,47 +44,42 @@ public class StrategyE implements Strategy {
 		if (!canExecute(context)) {
 			return null;
 		}
+
 		List<Output> outputs = new LinkedList<>();
+		Context newContext = context;
+		Payment payment = findPaymentWithProperTitle(context.getInvoice().getInvoiceTitle());
+		if (payment == null) {
+			payment = new Payment(getNow(),0.0);
+		}
+		newContext.setPayment(payment);
 
-		//context.setPayment(new Payment(0));
+		List<LocalDate> dates = datesOfChangedInterestRate(
+				newContext.getInvoice().getDeadlineDate(), newContext.getPayment().getPaymentDate());
 
-		outputs=generateOutputsForFakePayments(context);
-
-		Output output = setupOutput(
-				context.getInvoice(), context.getPayment(), context.getInvoice().getInvoice(), false);
-		outputs.add(output);
-
-		double diff = context.getInvoice().getInvoice() - context.getPayment().getPayment();
-		Context newContext;
-		if (diff == 0.0) {
-			newContext = new Context();
+		if (dates.isEmpty()) {
+			Output output = setupOutput(context.getInvoice(), context.getPayment(), context.getInvoice().getInvoice(), false);
+			outputs.add(output);
 		} else {
-			newContext = context;
-			newContext.getInvoice().setInvoice(diff);
-			newContext.setPayment(null);
+			StrategyForMoreThanOneInterestPercentage str = new StrategyForMoreThanOneInterestPercentage();
+			//str.generateOutputsForFakePayments(newContext);
 		}
 
 		return new Tuple(newContext, outputs);
 	}
 
-	/**
-	 * It creates fake payments to generate proper outputs when interest percentage is being changed
-	 *
-	 * @param context
-	 * @return
-	 */
-	private  List<Output> generateOutputsForFakePayments(Context context) {
-		List<LocalDate> dates = datesOfChangedInterestRate(
-				context.getInvoice().getDeadlineDate(), context.getPayment().getPaymentDate());
-
-		List<Output> outputs = new LinkedList<>();
-		dates.forEach(date -> {
-			Payment payment = new Payment(date, 0.0);
-			Output output = setupOutput(context.getInvoice(), payment, context.getInvoice().getInvoice(), true);
-			context.getInvoice().setDeadlineDate(date);
-			outputs.add(output);
-		});
-		return outputs;
+	private Payment findPaymentWithProperTitle(String title) {
+		boolean flag = false;
+		Payment payment = null;
+		for (int i = 0; i < paymentsCopy.size(); ) {
+			Payment paymentTemp = paymentsCopy.pollFirst();
+			if (title.equals(paymentTemp.getPaymentTitle())) {
+				flag = true;
+				payment = paymentTemp;
+			} else {
+				paymentsCopy.addLast(paymentTemp);
+			}
+		}
+		return flag ? payment : null;
 	}
 }
 

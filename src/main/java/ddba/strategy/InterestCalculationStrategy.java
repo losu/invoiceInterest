@@ -6,10 +6,10 @@ import ddba.Output;
 import ddba.Payment;
 import ddba.StatutoryInterest;
 import ddba.Tuple;
-import ddba.strategy.strategies.StrategyA;
-import ddba.strategy.strategies.StrategyB;
-import ddba.strategy.strategies.StrategyC;
-import ddba.strategy.strategies.StrategyD;
+import ddba.strategy.strategies.StrategyForSettingNewValuesWhenFieldIsNull;
+import ddba.strategy.strategies.StrategyForEqualInvoiceAndPaymentAmount;
+import ddba.strategy.strategies.StrategyForInvoiceBiggerThanInvoiceAmount;
+import ddba.strategy.strategies.StrategyForMoreThanOneInterestPercentage;
 
 import java.time.LocalDate;
 import java.util.ArrayDeque;
@@ -17,9 +17,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by ddba on 10/04/2017.
- */
+
 public class InterestCalculationStrategy {
 
 	public static List<Output> strategyCalculateInterest(ArrayDeque<Invoice> invoice, ArrayDeque<Payment> payments, LocalDate now) {
@@ -30,10 +28,9 @@ public class InterestCalculationStrategy {
 		Context context = new Context();
 
 		List<Strategy> strategies = setupStrategies();
-		StrategyA strategyA = new StrategyA();
-		strategyA.setInvoiceCopy(invoice);
-		strategyA.setPaymentsCopy(payments);
-		strategies.add(strategyA);
+		StrategyForSettingNewValuesWhenFieldIsNull strategyForSettingNewValuesWhenFieldIsNull = new StrategyForSettingNewValuesWhenFieldIsNull(invoice,payments);
+
+		strategies.add(strategyForSettingNewValuesWhenFieldIsNull);
 		Tuple<Context, LinkedList<Output>> tuple = null;
 
 		boolean flag = true;
@@ -58,39 +55,6 @@ public class InterestCalculationStrategy {
 				}
 			}
 		}
-
-//		StrategyB strategyB = new StrategyB();
-//		StrategyC strategyC = new StrategyC();
-//		StrategyD strategyD = new StrategyD();
-		//	StrategyE strategyE = new StrategyE();
-		//	strategyE.setNow(now);
-
-//		if (strategyA.canExecute(context)) {
-//			tuple=strategyA.execute(context);
-//			context = tuple.getLeft();
-//		}
-//		if (strategyB.canExecute(context)) {
-//			tuple=strategyB.execute(context);
-//			context = tuple.getLeft();
-//		}
-//		tuple.getRight().forEach(outputs::add);
-//
-//		if (strategyC.canExecute(context)) {
-//			tuple=strategyC.execute(context);
-//			context = tuple.getLeft();
-//		}
-//		tuple.getRight().forEach(outputs::add);
-//		if (strategyB.canExecute(context)) {
-//			tuple=strategyB.execute(context);
-//			context = tuple.getLeft();
-//		}
-//		tuple.getRight().forEach(outputs::add);
-//
-//		if (strategyD.canExecute(context)) {
-//			tuple=strategyD.execute(context);
-//			context = tuple.getLeft();
-//		}
-//		tuple.getRight().forEach(outputs::add);
 
 
 		return outputs;
@@ -117,13 +81,13 @@ public class InterestCalculationStrategy {
 	private static List<Strategy> setupStrategies() {
 		List<Strategy> strategies = new LinkedList<>();
 
-		StrategyB strategyB = new StrategyB();
-		StrategyC strategyC = new StrategyC();
-		StrategyD strategyD = new StrategyD();
+		StrategyForEqualInvoiceAndPaymentAmount strategyForEqualInvoiceAndPaymentAmount = new StrategyForEqualInvoiceAndPaymentAmount();
+		StrategyForInvoiceBiggerThanInvoiceAmount strategyForInvoiceBiggerThanInvoiceAmount = new StrategyForInvoiceBiggerThanInvoiceAmount();
+		StrategyForMoreThanOneInterestPercentage strategyForMoreThanOneInterestPercentage = new StrategyForMoreThanOneInterestPercentage();
 
-		strategies.add(strategyB);
-		strategies.add(strategyC);
-		strategies.add(strategyD);
+		strategies.add(strategyForEqualInvoiceAndPaymentAmount);
+		strategies.add(strategyForInvoiceBiggerThanInvoiceAmount);
+		strategies.add(strategyForMoreThanOneInterestPercentage);
 		return strategies;
 	}
 }

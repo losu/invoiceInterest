@@ -12,10 +12,8 @@ import java.util.List;
 import static ddba.InterestPercentage.InterestCalculator.setupOutput;
 import static ddba.strategy.InterestCalculationStrategy.datesOfChangedInterestRate;
 
-/**
- * Created by ddba on 10/04/2017.
- */
-public class StrategyB implements Strategy {
+
+public class StrategyForEqualInvoiceAndPaymentAmount implements Strategy {
 
 	@Override
 	public boolean canExecute(Context context) {

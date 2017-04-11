@@ -2,9 +2,6 @@ package ddba;
 
 import java.time.LocalDate;
 
-/**
- * Created by ddba on 31/03/2017.
- */
 public class Invoice {
 	private String invoiceTitle;
 	private LocalDate deadlineDate;
@@ -14,7 +11,6 @@ public class Invoice {
 		this.deadlineDate = deadlineDate;
 		this.invoice = invoice;
 		this.invoiceTitle = "";
-
 	}
 
 	public Invoice(String invoiceTitle, LocalDate deadlineDate, double invoice) {
