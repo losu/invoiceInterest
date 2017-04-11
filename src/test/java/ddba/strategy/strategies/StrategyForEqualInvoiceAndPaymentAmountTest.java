@@ -5,6 +5,7 @@ import ddba.Output;
 import ddba.Payment;
 import ddba.Tuple;
 import ddba.strategy.Context;
+import ddba.strategy.strategies.StrategyForEqualInvoiceAndPaymentAmount;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 

@@ -11,7 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static ddba.InterestPercentage.InterestCalculator.setupOutput;
-import static ddba.strategy.InterestCalculationStrategy.datesOfChangedInterestRate;
+import static ddba.strategy.InterestCalculation.datesOfChangedInterestRate;
 
 /**
  * Created by ddba on 10/04/2017.

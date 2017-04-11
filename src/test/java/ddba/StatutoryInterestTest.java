@@ -175,7 +175,7 @@ public class StatutoryInterestTest {
 //						new Payment("B rent", LocalDate.of(2001, 12, 17), 1000)
 //				)
 //		);
-//		List<Output> outputs = InterestCalculationStrategy.strategyCalculateInterest(invoices, payments);
+//		List<Output> outputs = InterestCalculation.strategyCalculateInterest(invoices, payments);
 //		outputs.forEach(s -> {
 //
 //					System.out.println("Interest :" +s.getInterestPercentage());

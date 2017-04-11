@@ -6,10 +6,10 @@ import ddba.Output;
 import ddba.Payment;
 import ddba.StatutoryInterest;
 import ddba.Tuple;
-import ddba.strategy.strategies.StrategyForSettingNewValuesWhenFieldIsNull;
 import ddba.strategy.strategies.StrategyForEqualInvoiceAndPaymentAmount;
 import ddba.strategy.strategies.StrategyForInvoiceBiggerThanInvoiceAmount;
 import ddba.strategy.strategies.StrategyForMoreThanOneInterestPercentage;
+import ddba.strategy.strategies.StrategyForSettingNewValuesWhenFieldIsNull;
 
 import java.time.LocalDate;
 import java.util.ArrayDeque;
@@ -18,7 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class InterestCalculationStrategy {
+public class InterestCalculation {
 
 	public static List<Output> strategyCalculateInterest(ArrayDeque<Invoice> invoice, ArrayDeque<Payment> payments, LocalDate now) {
 

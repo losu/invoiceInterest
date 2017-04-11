@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static ddba.InterestPercentage.InterestCalculator.setupOutput;
-import static ddba.strategy.InterestCalculationStrategy.datesOfChangedInterestRate;
+import static ddba.strategy.InterestCalculation.datesOfChangedInterestRate;
 
 
 public class StrategyForEqualInvoiceAndPaymentAmount implements Strategy {

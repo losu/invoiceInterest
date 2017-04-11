@@ -1,6 +1,6 @@
 package ddba;
 
-import ddba.strategy.InterestCalculationStrategy;
+import ddba.strategy.InterestCalculation;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by ddba on 10/04/2017.
  */
-public class InterestCalculationStrategyTest {
+public class InterestCalculationTest {
 
 	@Test
 	public void shouldRunProperlyTheWholeFlowByUsingAllStrategies(){
@@ -28,7 +28,7 @@ public class InterestCalculationStrategyTest {
 						new Payment(LocalDate.of(2000, 12, 12), 500)));
 
 		List<Output> outputs;
-		outputs = InterestCalculationStrategy.strategyCalculateInterest(invoices, payments, null);
+		outputs = InterestCalculation.strategyCalculateInterest(invoices, payments, null);
 
 		Assertions.assertThat(outputs.stream().map(Output::getInterestPercentage)).containsExactly(21.0, 21.0, 21.0, 21.0, 30.0);
 		Assertions.assertThat(outputs.stream().map(Output::getInterest)).containsExactly(5.75, 11.22, 11.51, 55.81, 16.85);
