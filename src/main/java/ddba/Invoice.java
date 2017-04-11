@@ -31,8 +31,12 @@ public class Invoice {
 		return invoiceTitle;
 	}
 
-	public void setInvoiceTitle(String invoiceTitle) {
-		this.invoiceTitle = invoiceTitle;
+	public void setInvoice(double invoice) {
+		this.invoice = invoice;
+	}
+
+	public void setDeadlineDate(LocalDate deadlineDate) {
+		this.deadlineDate = deadlineDate;
 	}
 
 	public double getInvoice() {

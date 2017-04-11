@@ -70,11 +70,10 @@ public class InterestPercentage {
 		return 0;
 	}
 
-	static class InterestCalculator {
-
-		private static long daysOverDeadline(LocalDate deadlineDate, LocalDate paymentDate, boolean flag) {
+	public static class InterestCalculator {
+		public static long daysOverDeadline(LocalDate deadlineDate, LocalDate paymentDate, boolean flag) {
 			if (flag)
-				return DAYS.between(deadlineDate, paymentDate.minusDays(1));
+				return DAYS.between(deadlineDate, paymentDate);
 			else
 				return DAYS.between(deadlineDate, paymentDate);
 		}
@@ -235,7 +234,7 @@ public class InterestPercentage {
 			return outputs;
 		}
 
-		private static Output setupOutput(Invoice invoice, Payment payment, double invoiceTemp, boolean flag) {
+		public static Output setupOutput(Invoice invoice, Payment payment, double invoiceTemp, boolean flag) {
 			Output output = new Output();
 			output.setDaysOverDeadline(daysOverDeadline(invoice.getDeadlineDate(), payment.getPaymentDate(), flag));
 			output.setPeriod(payment.getPaymentDate().minusDays(output.getDaysOverDeadline()) + " - " + payment.getPaymentDate());
@@ -247,14 +246,27 @@ public class InterestPercentage {
 	}
 
 	public static LocalDate decide(LocalDate start, LocalDate end) {
-		//,List<Invoice> invoice, List<Payment> payments
 		List<LocalDate> dates = new ArrayList<>();
 		for (StatutoryInterest statutoryInterest : listOFInterest) {
 			if (statutoryInterest.getDate().isAfter(start) && statutoryInterest.getDate().isBefore(end)) {
+				dates.add(statutoryInterest.getDate());
 				return statutoryInterest.getDate();
 			}
 		}
 		return null;
 	}
+
+//	public static List<LocalDate> decideList(LocalDate start, LocalDate end) {
+//		List<LocalDate> dates = new ArrayList<>();
+//		for (StatutoryInterest statutoryInterest : listOFInterest) {
+//			if (statutoryInterest.getDate().isAfter(start) && statutoryInterest.getDate().isBefore(end)) {
+//				dates.add(statutoryInterest.getDate());
+//			}
+//		}
+//		if (dates.isEmpty())
+//			return null;
+//		else
+//			return dates;
+//	}
 }
 

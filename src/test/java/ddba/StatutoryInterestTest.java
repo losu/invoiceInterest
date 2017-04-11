@@ -76,17 +76,16 @@ public class StatutoryInterestTest {
 		ArrayDeque<Invoice> invoices = new ArrayDeque<>(
 				Arrays.asList(
 						new Invoice(LocalDate.of(2000, 1, 20), 1000)));
-		ArrayDeque<Payment> payments=
+		ArrayDeque<Payment> payments =
 				new ArrayDeque<>(Arrays.asList(new Payment(LocalDate.of(2000, 2, 20), 500),
 						new Payment(LocalDate.of(2000, 3, 20), 500)));
 
 		List<Output> outputs;
-		outputs = InterestPercentage.InterestCalculator.calculateInteresTt(invoices, payments,null);
+		outputs = InterestPercentage.InterestCalculator.calculateInteresTt(invoices, payments, null);
 
 		Assertions.assertThat(outputs.stream().map(Output::getInterestPercentage)).containsExactly(21.0, 21.0);
 		Assertions.assertThat(outputs.stream().map(Output::getInterest)).containsExactly(17.84, 17.26);
 		Assertions.assertThat(outputs.stream().map(Output::getDaysOverDeadline)).containsExactly(31L, 60L);
-
 	}
 
 	@Test
@@ -103,12 +102,11 @@ public class StatutoryInterestTest {
 						new Payment(LocalDate.of(2000, 5, 12), 500)));
 
 		List<Output> outputs;
-		outputs = InterestPercentage.InterestCalculator.calculateInteresTt(invoices, payments,null);
+		outputs = InterestPercentage.InterestCalculator.calculateInteresTt(invoices, payments, null);
 
 		Assertions.assertThat(outputs.stream().map(Output::getInterestPercentage)).containsExactly(21.0, 21.0, 21.0, 21.0);
 		Assertions.assertThat(outputs.stream().map(Output::getInterest)).containsExactly(5.75, 11.22, 11.51, 6.33);
 		Assertions.assertThat(outputs.stream().map(Output::getDaysOverDeadline)).containsExactly(10L, 39L, 20L, 22L);
-
 	}
 
 	@Test
@@ -120,8 +118,8 @@ public class StatutoryInterestTest {
 				Arrays.asList(new Payment(LocalDate.of(2000, 12, 10), 1000)));
 
 		List<Output> outputs;
-		outputs = InterestPercentage.InterestCalculator.calculateInteresTt(invoices, payments,null);
-
+		outputs = InterestPercentage.InterestCalculator.calculateInteresTt(invoices, payments, null);
+		outputs.forEach(s -> System.out.println(s.getInterest()));
 		Assertions.assertThat(outputs.stream().map(Output::getInterestPercentage)).containsExactly(21.0, 30.0);
 	}
 
@@ -134,7 +132,7 @@ public class StatutoryInterestTest {
 						new Payment("A rent", LocalDate.of(2000, 1, 10), 1000)
 				)
 		);
-		List<Output> outputs = InterestPercentage.InterestCalculator.calculateInteresTt(invoices, payments,null);
+		List<Output> outputs = InterestPercentage.InterestCalculator.calculateInteresTt(invoices, payments, null);
 
 		Assertions.assertThat(outputs.stream().map(Output::getInterest)).containsExactly(0.0);
 	}
@@ -149,7 +147,7 @@ public class StatutoryInterestTest {
 				)
 		);
 
-		List<Output> outputs = InterestPercentage.InterestCalculator.calculateInteresTt(invoices, payments,null);
+		List<Output> outputs = InterestPercentage.InterestCalculator.calculateInteresTt(invoices, payments, null);
 		Assertions.assertThat(outputs.stream().map(Output::getInterest)).containsExactly(0.58);
 	}
 
@@ -164,9 +162,31 @@ public class StatutoryInterestTest {
 				)
 		);
 
-		List<Output> outputs = InterestPercentage.InterestCalculator.calculateInteresTt(invoices, payments,null);
+		List<Output> outputs = InterestPercentage.InterestCalculator.calculateInteresTt(invoices, payments, null);
 		Assertions.assertThat(outputs.stream().map(Output::getInterest)).containsExactly(0.58);
 	}
+
+//	@Test
+//	public void StrategyD() {
+//		ArrayDeque<Invoice> invoices = new ArrayDeque<>(
+//				Arrays.asList(new Invoice("A rent", LocalDate.of(2000, 1, 10), 1000)));
+//		ArrayDeque<Payment> payments = new ArrayDeque<>(
+//				Arrays.asList(
+//						new Payment("B rent", LocalDate.of(2001, 12, 17), 1000)
+//				)
+//		);
+//		List<Output> outputs = InterestCalculationStrategy.strategyCalculateInterest(invoices, payments);
+//		outputs.forEach(s -> {
+//
+//					System.out.println("Interest :" +s.getInterestPercentage());
+//					System.out.println("Days :" +s.getDaysOverDeadline());
+//				}
+//
+//		);
+//
+//		//Assertions.assertThat(outputs.stream().map(Output::getInterestPercentage)).containsExactly(21.0, 30.0);
+//	}
+
 
 	@Test
 	public void test() throws NoSuchMethodException, ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException {
@@ -185,6 +205,6 @@ public class StatutoryInterestTest {
 
 		method = cls.getDeclaredMethod("getName", String.class);
 		method.setAccessible(true);
-		method.invoke(obj,new String("param"));
+		method.invoke(obj, new String("param"));
 	}
 }

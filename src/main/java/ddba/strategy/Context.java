@@ -12,6 +12,14 @@ public class Context {
 
 	private Strategy strategy;
 
+	public Context() {
+	}
+
+	public Context(Invoice invoice, Payment payment) {
+		this.invoice = invoice;
+		this.payment = payment;
+	}
+
 	public Context(Strategy strategy) {
 		this.strategy = strategy;
 	}
