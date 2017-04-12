@@ -3,7 +3,7 @@ package ddba.strategy;
 import ddba.Invoice;
 import ddba.Payment;
 
-public final class Context {
+public class Context {
 	private Invoice invoice;
 	private Payment payment;
 

@@ -1,5 +1,6 @@
 package ddba.strategy.strategies;
 
+import ddba.Invoice;
 import ddba.Output;
 import ddba.Payment;
 import ddba.Tuple;
@@ -11,8 +12,9 @@ import java.util.ArrayDeque;
 import java.util.LinkedList;
 import java.util.List;
 
-import static ddba.InterestPercentage.InterestCalculator.setupOutput;
+import static ddba.InterestRate.decideInterestPercentage;
 import static ddba.strategy.InterestCalculation.datesOfChangedInterestRate;
+import static java.time.temporal.ChronoUnit.DAYS;
 
 public class StrategyE implements Strategy {
 
@@ -49,7 +51,7 @@ public class StrategyE implements Strategy {
 		Context newContext = context;
 		Payment payment = findPaymentWithProperTitle(context.getInvoice().getInvoiceTitle());
 		if (payment == null) {
-			payment = new Payment(getNow(),0.0);
+			payment = new Payment(getNow(), 0.0);
 		}
 		newContext.setPayment(payment);
 
@@ -57,7 +59,7 @@ public class StrategyE implements Strategy {
 				newContext.getInvoice().getDeadlineDate(), newContext.getPayment().getPaymentDate());
 
 		if (dates.isEmpty()) {
-			Output output = setupOutput(context.getInvoice(), context.getPayment(), context.getInvoice().getInvoice(), false);
+			Output output = setupOutput(context.getInvoice(), context.getPayment(), context.getInvoice().getInvoice());
 			outputs.add(output);
 		} else {
 			StrategyForMoreThanOneInterestPercentage str = new StrategyForMoreThanOneInterestPercentage();
@@ -80,6 +82,33 @@ public class StrategyE implements Strategy {
 			}
 		}
 		return flag ? payment : null;
+	}
+
+	private Output setupOutput(Invoice invoice, Payment payment, double invoiceTemp) {
+		Output output = new Output();
+		output.setDaysOverDeadline(DAYS.between(invoice.getDeadlineDate(), payment.getPaymentDate()));
+		output.setPeriod(payment.getPaymentDate().minusDays(output.getDaysOverDeadline()) + " - " + payment.getPaymentDate());
+		output.setInterestPercentage(decideInterestPercentage(invoice.getDeadlineDate()));
+		output.setInterest(calculateInterest(invoice.getDeadlineDate(), invoiceTemp, payment.getPaymentDate()));
+
+		return output;
+	}
+
+	private double calculateInterest(LocalDate deadlineDate, double invoice, LocalDate paymentDate) {
+
+		double percentage = decideInterestPercentage(deadlineDate);
+		double annualInterest = invoice * percentage / 100;
+
+		double dailyInterest = annualInterest / 365;
+		long numberOfDays = DAYS.between(deadlineDate, paymentDate);
+
+		double interest = dailyInterest * numberOfDays;
+
+		//rounding to decimal places
+		interest = Math.round(interest * 100);
+		interest = interest / 100;
+
+		return interest;
 	}
 }
 

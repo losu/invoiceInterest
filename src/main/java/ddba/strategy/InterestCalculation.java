@@ -1,6 +1,6 @@
 package ddba.strategy;
 
-import ddba.InterestPercentage;
+import ddba.InterestRate;
 import ddba.Invoice;
 import ddba.Output;
 import ddba.Payment;
@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-
 public class InterestCalculation {
 
 	public static List<Output> strategyCalculateInterest(ArrayDeque<Invoice> invoice, ArrayDeque<Payment> payments, LocalDate now) {
@@ -28,7 +27,7 @@ public class InterestCalculation {
 		Context context = new Context();
 
 		List<Strategy> strategies = setupStrategies();
-		StrategyForSettingNewValuesWhenFieldIsNull strategyForSettingNewValuesWhenFieldIsNull = new StrategyForSettingNewValuesWhenFieldIsNull(invoice,payments);
+		StrategyForSettingNewValuesWhenFieldIsNull strategyForSettingNewValuesWhenFieldIsNull = new StrategyForSettingNewValuesWhenFieldIsNull(invoice, payments);
 
 		strategies.add(strategyForSettingNewValuesWhenFieldIsNull);
 		Tuple<Context, LinkedList<Output>> tuple = null;
@@ -47,7 +46,7 @@ public class InterestCalculation {
 
 				if (tuple != null) {
 					tuple.getRight().forEach(outputs::add);
-					tuple=null;
+					tuple = null;
 				}
 				if (counter == strategies.size()) {
 					flag = false;
@@ -56,22 +55,24 @@ public class InterestCalculation {
 			}
 		}
 
-
 		return outputs;
 	}
 
 	/**
-	 * it checks how many changes in interest rate were and returns all of those dates (where interestRate were changed)
+	 * it checks if between invoice payment deadline and actual date of payment
+	 * there were changes of the interestRate. If so then it save those dates.
 	 *
-	 * @param start - invoice date
-	 * @param end   - payment date
-	 * @return
+	 *
+	 * @param paymentDeadline - date of invoice payment deadline
+	 * @param actualPaymentDate - date of payment
+	 * @return - empty list if no changes in interestRate were done. List of date if  between deadline and payment were
+	 * occured some changes of interestRate
 	 */
-	public static List<LocalDate> datesOfChangedInterestRate(LocalDate start, LocalDate end) {
-		InterestPercentage interestPercentage = new InterestPercentage();
+	public static List<LocalDate> datesOfChangedInterestRate(LocalDate paymentDeadline, LocalDate actualPaymentDate) {
+		InterestRate interestRate = new InterestRate();
 		List<LocalDate> dates = new ArrayList<>();
-		for (StatutoryInterest statutoryInterest : interestPercentage.getListOFInterest()) {
-			if (statutoryInterest.getDate().isAfter(start) && statutoryInterest.getDate().isBefore(end)) {
+		for (StatutoryInterest statutoryInterest : interestRate.getListOFInterest()) {
+			if (statutoryInterest.getDate().isAfter(paymentDeadline) && statutoryInterest.getDate().isBefore(actualPaymentDate)) {
 				dates.add(statutoryInterest.getDate());
 			}
 		}

@@ -1,6 +1,8 @@
-package ddba;
+package ddba.strategy;
 
-import ddba.strategy.InterestCalculation;
+import ddba.Invoice;
+import ddba.Output;
+import ddba.Payment;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
