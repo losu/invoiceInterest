@@ -1,12 +1,12 @@
 package ddba.strategy;
 
+import ddba.Output;
 import ddba.Tuple;
 
-/**
- * Created by ddba on 07/04/2017.
- */
+import java.util.List;
+
 public interface Strategy {
 	boolean canExecute(Context context);
-	Tuple execute(Context context);
+	Tuple<Context,List<Output>> execute(Context context);
 
 }

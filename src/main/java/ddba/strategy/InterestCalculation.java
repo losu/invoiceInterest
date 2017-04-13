@@ -1,11 +1,13 @@
 package ddba.strategy;
 
+import com.sun.istack.internal.Nullable;
 import ddba.InterestRate;
 import ddba.Invoice;
 import ddba.Output;
 import ddba.Payment;
 import ddba.StatutoryInterest;
 import ddba.Tuple;
+import ddba.strategy.strategies.StrategyWhenThereIsNoPaymentTitle;
 import ddba.strategy.strategies.StrategyForEqualInvoiceAndPaymentAmount;
 import ddba.strategy.strategies.StrategyForInvoiceBiggerThanInvoiceAmount;
 import ddba.strategy.strategies.StrategyForMoreThanOneInterestPercentage;
@@ -19,18 +21,49 @@ import java.util.List;
 
 public class InterestCalculation {
 
-	public static List<Output> strategyCalculateInterest(ArrayDeque<Invoice> invoice, ArrayDeque<Payment> payments, LocalDate now) {
+	/**
+	 * it is overloaded method with added new additional parameter now
+	 * <p>
+	 * calculates the interest which has to be paid as a fee for the period od time between deadline and
+	 * be late actual date of payment.
+	 * <p>
+	 * Method takes two list of data. First one is the whole list of invoices which has to be paid. Second one
+	 * is a queue of payments which has information of amount of money paid and when it was paid
+	 *
+	 * @param invoice  - list of invoices to paid
+	 * @param payments - list of payments
+	 * @param now      - when there is now match for title of payment and invoice,
+	 *                 it calculates invoice for deadline up until 'now' param
+	 * @info now is set as a default date(current date when the report is generated) if there is
+	 *                           no information until when the interest should be generated
+	 * @return list of Output object which represents period since when to when the payment was not paid, interest percentage
+	 * how many days and amount of interest
+	 */
+	static List<Output> strategyCalculateInterest(ArrayDeque<Invoice> invoice, ArrayDeque<Payment> payments, @Nullable LocalDate now) {
 
 		List<Output> outputs = new LinkedList<>();
 
-//			Context context = new Context(invoice.pollFirst(),payments.pollFirst());
+		if(now == null){
+			now = LocalDate.now();
+		}
+
 		Context context = new Context();
 
-		List<Strategy> strategies = setupStrategies();
+		List<Strategy> strategies = new ArrayList<>();
 		StrategyForSettingNewValuesWhenFieldIsNull strategyForSettingNewValuesWhenFieldIsNull = new StrategyForSettingNewValuesWhenFieldIsNull(invoice, payments);
 
+		StrategyForEqualInvoiceAndPaymentAmount strategyForEqualInvoiceAndPaymentAmount = new StrategyForEqualInvoiceAndPaymentAmount();
+		StrategyForInvoiceBiggerThanInvoiceAmount strategyForInvoiceBiggerThanInvoiceAmount = new StrategyForInvoiceBiggerThanInvoiceAmount();
+		StrategyForMoreThanOneInterestPercentage strategyForMoreThanOneInterestPercentage = new StrategyForMoreThanOneInterestPercentage();
+		StrategyWhenThereIsNoPaymentTitle strategyWhenThereIsNoPaymentTitle = new StrategyWhenThereIsNoPaymentTitle(payments,now);
+
 		strategies.add(strategyForSettingNewValuesWhenFieldIsNull);
-		Tuple<Context, LinkedList<Output>> tuple = null;
+		strategies.add(strategyForEqualInvoiceAndPaymentAmount);
+		strategies.add(strategyForInvoiceBiggerThanInvoiceAmount);
+		strategies.add(strategyForMoreThanOneInterestPercentage);
+		strategies.add(strategyWhenThereIsNoPaymentTitle);
+
+		Tuple<Context, List<Output>> tuple = null;
 
 		boolean flag = true;
 		int counter = 0;
@@ -43,7 +76,6 @@ public class InterestCalculation {
 				} else {
 					counter++;
 				}
-
 				if (tuple != null) {
 					tuple.getRight().forEach(outputs::add);
 					tuple = null;

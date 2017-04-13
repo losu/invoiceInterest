@@ -5,12 +5,11 @@ import ddba.Output;
 import ddba.Payment;
 import ddba.Tuple;
 import ddba.strategy.Context;
-import ddba.strategy.strategies.StrategyForMoreThanOneInterestPercentage;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import java.time.LocalDate;
-import java.util.LinkedList;
+import java.util.List;
 
 public class StrategyForMoreThanOneInterestPercentageTest {
 	@Test
@@ -20,7 +19,7 @@ public class StrategyForMoreThanOneInterestPercentageTest {
 		context.setPayment(new Payment("", LocalDate.of(2001, 12, 17), 500));
 		StrategyForMoreThanOneInterestPercentage strategyForMoreThanOneInterestPercentage = new StrategyForMoreThanOneInterestPercentage();
 
-		Tuple<Context, LinkedList<Output>> tuple = strategyForMoreThanOneInterestPercentage.execute(context);
+		Tuple<Context, List<Output>> tuple = strategyForMoreThanOneInterestPercentage.execute(context);
 
 		Assertions.assertThat(tuple.getRight().stream().map(Output::getInterestPercentage)).containsExactly(21.0, 30.0, 20.0);
 	}

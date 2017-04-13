@@ -24,14 +24,15 @@ public class StrategyForEqualInvoiceAndPaymentAmount implements Strategy {
 		}
 
 		List<LocalDate> dates = datesOfChangedInterestRate(context.getInvoice().getDeadlineDate(), context.getPayment().getPaymentDate());
+		if(!context.getInvoice().getInvoiceTitle().equals(context.getPayment().getPaymentTitle())) {
+			return false;
+		}
 		return dates.isEmpty() && context.getInvoice().getInvoice() == context.getPayment().getPayment();
 	}
 
 	@Override
 	public Tuple<Context, List<Output>> execute(Context context) {
-		if (!canExecute(context)) {
-			return null;
-		}
+
 		List<Output> outputs = new LinkedList<>();
 
 		Output output = setupOutput(context.getInvoice(), context.getPayment(), context.getInvoice().getInvoice());

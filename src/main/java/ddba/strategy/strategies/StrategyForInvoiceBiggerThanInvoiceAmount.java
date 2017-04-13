@@ -29,16 +29,15 @@ public class StrategyForInvoiceBiggerThanInvoiceAmount implements Strategy {
 		if (context.getPayment().getPayment() <= 0.0)
 			return false;
 
+		if(!context.getInvoice().getInvoiceTitle().equals(context.getPayment().getPaymentTitle()))
+			return false;
+
 		return context.getInvoice().getInvoice() > context.getPayment().getPayment();
 	}
 
 	@Override
 	public Tuple<Context, List<Output>> execute(Context context) {
 		List<Output> outputs = new LinkedList<>();
-
-		if (!canExecute(context)) {
-			return null;
-		}
 
 		double diff = context.getInvoice().getInvoice() - context.getPayment().getPayment();
 

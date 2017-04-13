@@ -5,12 +5,11 @@ import ddba.Output;
 import ddba.Payment;
 import ddba.Tuple;
 import ddba.strategy.Context;
-import ddba.strategy.strategies.StrategyForEqualInvoiceAndPaymentAmount;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import java.time.LocalDate;
-import java.util.LinkedList;
+import java.util.List;
 
 public class StrategyForEqualInvoiceAndPaymentAmountTest {
 
@@ -22,7 +21,7 @@ public class StrategyForEqualInvoiceAndPaymentAmountTest {
 		context.setPayment(new Payment("", LocalDate.of(2000, 1, 11), 1000));
 		StrategyForEqualInvoiceAndPaymentAmount strategyForEqualInvoiceAndPaymentAmount = new StrategyForEqualInvoiceAndPaymentAmount();
 
-		Tuple<Context, LinkedList<Output>> tuple = strategyForEqualInvoiceAndPaymentAmount.execute(context);
+		Tuple<Context, List<Output>> tuple = strategyForEqualInvoiceAndPaymentAmount.execute(context);
 
 		Assertions.assertThat(tuple.getLeft().getPayment()).isNull();
 		Assertions.assertThat(tuple.getLeft().getInvoice()).isNull();

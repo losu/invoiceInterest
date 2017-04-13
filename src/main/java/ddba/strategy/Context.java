@@ -1,18 +1,23 @@
 package ddba.strategy;
 
+import com.sun.istack.internal.Nullable;
 import ddba.Invoice;
 import ddba.Payment;
 
+/**
+ * Context contains two fields invoice and payment. Object that is being consumed by strategies
+ *
+ * @pre before consumption fields: invoice and payment are expected to be null
+ * @post each of the fields are dependent on the specific strategy.
+ */
 public class Context {
+
+	@Nullable
 	private Invoice invoice;
+	@Nullable
 	private Payment payment;
 
 	public Context() {
-	}
-
-	public Context(Invoice invoice, Payment payment) {
-		this.invoice = invoice;
-		this.payment = payment;
 	}
 
 	public Invoice getInvoice() {

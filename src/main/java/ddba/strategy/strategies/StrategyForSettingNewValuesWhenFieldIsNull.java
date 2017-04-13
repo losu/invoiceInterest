@@ -41,9 +41,7 @@ public class StrategyForSettingNewValuesWhenFieldIsNull implements Strategy {
 
 	@Override
 	public Tuple<Context, List<Output>> execute(Context context) {
-		if (!canExecute(context)) {
-			return null;
-		}
+
 
 		List<Output> outputs = new LinkedList<>();
 

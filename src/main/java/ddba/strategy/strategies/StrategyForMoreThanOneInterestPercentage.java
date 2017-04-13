@@ -15,7 +15,6 @@ import static ddba.InterestRate.decideInterestPercentage;
 import static ddba.strategy.InterestCalculation.datesOfChangedInterestRate;
 import static java.time.temporal.ChronoUnit.DAYS;
 
-
 public class StrategyForMoreThanOneInterestPercentage implements Strategy {
 
 	@Override
@@ -25,16 +24,17 @@ public class StrategyForMoreThanOneInterestPercentage implements Strategy {
 
 		List<LocalDate> dates = datesOfChangedInterestRate(
 				context.getInvoice().getDeadlineDate(), context.getPayment().getPaymentDate());
+		if (!context.getInvoice().getInvoiceTitle().equals(context.getPayment().getPaymentTitle())) {
+			return false;
+		}
 
 		return !dates.isEmpty();
 	}
 
 	@Override
 	public Tuple<Context, List<Output>> execute(Context context) {
-		if (!canExecute(context)) {
-			return null;
-		}
-		List<Output> outputs ;
+
+		List<Output> outputs;
 
 		outputs = generateOutputsForFakePayments(context);
 
@@ -57,7 +57,7 @@ public class StrategyForMoreThanOneInterestPercentage implements Strategy {
 
 	/**
 	 * It creates fake payments with zero payment to generate proper outputs when interest percentage is being changed
-	 *
+	 * <p>
 	 * when actual payment was done late, then there is a risk that interest rate was changed compared to the one
 	 * when the invoice payment deadline was set. So to calculate interest for those delay days method creates fake payment
 	 * with zero amount for payment and set the date of payment to the one when interest rate has been changed.

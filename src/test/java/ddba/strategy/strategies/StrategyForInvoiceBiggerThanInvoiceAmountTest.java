@@ -5,16 +5,13 @@ import ddba.Output;
 import ddba.Payment;
 import ddba.Tuple;
 import ddba.strategy.Context;
-import ddba.strategy.strategies.StrategyForInvoiceBiggerThanInvoiceAmount;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import java.time.LocalDate;
-import java.util.LinkedList;
+import java.util.List;
 
-/**
- * Created by ddba on 11/04/2017.
- */
+
 public class StrategyForInvoiceBiggerThanInvoiceAmountTest {
 	@Test
 	public void shouldConsumePaymentStrategyC() {
@@ -23,7 +20,7 @@ public class StrategyForInvoiceBiggerThanInvoiceAmountTest {
 		context.setPayment(new Payment("", LocalDate.of(2000, 1, 11), 500));
 		StrategyForInvoiceBiggerThanInvoiceAmount strategyForInvoiceBiggerThanInvoiceAmount = new StrategyForInvoiceBiggerThanInvoiceAmount();
 
-		Tuple<Context, LinkedList<Output>> tuple = strategyForInvoiceBiggerThanInvoiceAmount.execute(context);
+		Tuple<Context, List<Output>> tuple = strategyForInvoiceBiggerThanInvoiceAmount.execute(context);
 
 		Assertions.assertThat(tuple.getLeft().getPayment()).isNull();
 		Assertions.assertThat(tuple.getLeft().getInvoice().getInvoice()).isEqualTo(500.0);

@@ -5,14 +5,13 @@ import ddba.Output;
 import ddba.Payment;
 import ddba.Tuple;
 import ddba.strategy.Context;
-import ddba.strategy.strategies.StrategyForSettingNewValuesWhenFieldIsNull;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import java.time.LocalDate;
 import java.util.ArrayDeque;
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.List;
 
 public class StrategyForSettingNewValuesWhenFieldIsNullTest {
 	@Test
@@ -29,7 +28,7 @@ public class StrategyForSettingNewValuesWhenFieldIsNullTest {
 
 		StrategyForSettingNewValuesWhenFieldIsNull strategyForSettingNewValuesWhenFieldIsNull = new StrategyForSettingNewValuesWhenFieldIsNull(invoices,payments);
 
-		Tuple<Context, LinkedList<Output>> tuple = strategyForSettingNewValuesWhenFieldIsNull.execute(context);
+		Tuple<Context, List<Output>> tuple = strategyForSettingNewValuesWhenFieldIsNull.execute(context);
 		context = tuple.getLeft();
 
 		Assertions.assertThat(context.getInvoice()).isNotNull();
