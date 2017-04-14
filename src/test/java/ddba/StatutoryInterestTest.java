@@ -7,6 +7,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.util.ArrayDeque;
 import java.util.Arrays;
@@ -167,23 +169,23 @@ public class StatutoryInterestTest {
 
 
 
-//	@Test
-//	public void test() throws NoSuchMethodException, ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException {
-//		LocalDate of = LocalDate.of(2000, 2, 10);
-//		if (of.isEqual(LocalDate.of(2000, 2, 10))) {
-//			System.out.println("t");
-//		}
-//		System.out.println("f");
-//		System.out.println(DAYS.between(LocalDate.of(2000, 1, 10), LocalDate.of(2000, 1, 10)));
-//		System.out.println(DAYS.between(LocalDate.of(2000, 11, 1), LocalDate.of(2000, 12, 10)));
-//
-//		Class cls = Class.forName("ddba.Main");
-//		Object obj = cls.newInstance();
-//		Method method = cls.getMethod("getName", null);
-//		method.invoke(obj, null);
-//
-//		method = cls.getDeclaredMethod("getName", String.class);
-//		method.setAccessible(true);
-//		method.invoke(obj, new String("param"));
-//	}
+	@Test
+	public void reflationTest() throws NoSuchMethodException, ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException {
+		LocalDate of = LocalDate.of(2000, 2, 10);
+		if (of.isEqual(LocalDate.of(2000, 2, 10))) {
+			System.out.println("t");
+		}
+		System.out.println("f");
+		System.out.println(DAYS.between(LocalDate.of(2000, 1, 10), LocalDate.of(2000, 1, 10)));
+		System.out.println(DAYS.between(LocalDate.of(2000, 11, 1), LocalDate.of(2000, 12, 10)));
+
+		Class cls = Class.forName("ddba.Main");
+		Object obj = cls.newInstance();
+		Method method = cls.getMethod("getName", null);
+		method.invoke(obj, null);
+
+		method = cls.getDeclaredMethod("getName", String.class);
+		method.setAccessible(true);
+		method.invoke(obj, new String("param"));
+	}
 }

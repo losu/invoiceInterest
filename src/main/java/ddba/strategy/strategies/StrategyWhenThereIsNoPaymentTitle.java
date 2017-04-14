@@ -42,7 +42,7 @@ public class StrategyWhenThereIsNoPaymentTitle implements Strategy {
 
 	@Override
 	public Tuple<Context, List<Output>> execute(Context context) {
-		
+
 		List<Output> outputs = new LinkedList<>();
 		Payment payment = findPaymentWithProperTitle(context.getInvoice().getInvoiceTitle());
 		if (payment == null) {
@@ -129,8 +129,8 @@ public class StrategyWhenThereIsNoPaymentTitle implements Strategy {
 	 * It creates fake payments with zero payment to generate proper outputs when interest percentage is being changed
 	 *
 	 * when actual payment was done late, then there is a risk that interest rate was changed compared to the one
-	 * when the invoice payment deadline was set. So to calculate interest for those delay days method creates fake payment
-	 * with zero amount for payment and set the date of payment to the one when interest rate has been changed.
+	 * when the invoice payment deadline was set. So to calculate interest for those delay days, the method creates fake payment
+	 * with zero amount for payment and sets the date of payment to the one when interest rate has been changed.
 	 *
 	 * @param context - contains payment deadline and its actual payment date
 	 * @return list of outputs with calculated amount of interest in each sector of interest rate
