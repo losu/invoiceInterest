@@ -123,16 +123,4 @@ public class InterestCalculation {
 		return dates;
 	}
 
-	private static List<Strategy> setupStrategies() {
-		List<Strategy> strategies = new LinkedList<>();
-
-		StrategyForEqualInvoiceAndPaymentAmount strategyForEqualInvoiceAndPaymentAmount = new StrategyForEqualInvoiceAndPaymentAmount();
-		StrategyForInvoiceBiggerThanInvoiceAmount strategyForInvoiceBiggerThanInvoiceAmount = new StrategyForInvoiceBiggerThanInvoiceAmount();
-		StrategyForMoreThanOneInterestPercentage strategyForMoreThanOneInterestPercentage = new StrategyForMoreThanOneInterestPercentage();
-
-		strategies.add(strategyForEqualInvoiceAndPaymentAmount);
-		strategies.add(strategyForInvoiceBiggerThanInvoiceAmount);
-		strategies.add(strategyForMoreThanOneInterestPercentage);
-		return strategies;
-	}
 }
