@@ -5,18 +5,18 @@ import java.time.LocalDate;
 public class Invoice {
 	private String invoiceTitle;
 	private LocalDate deadlineDate;
-	private double invoice;
+	private double amount;
 
-	public Invoice(LocalDate deadlineDate, double invoice) {
+	public Invoice(LocalDate deadlineDate, double amount) {
 		this.deadlineDate = deadlineDate;
-		this.invoice = invoice;
+		this.amount = amount;
 		this.invoiceTitle = "";
 	}
 
-	public Invoice(String invoiceTitle, LocalDate deadlineDate, double invoice) {
+	public Invoice(String invoiceTitle, LocalDate deadlineDate, double amount) {
 		this.invoiceTitle = invoiceTitle;
 		this.deadlineDate = deadlineDate;
-		this.invoice = invoice;
+		this.amount = amount;
 	}
 
 	public LocalDate getDeadlineDate() {
@@ -27,15 +27,7 @@ public class Invoice {
 		return invoiceTitle;
 	}
 
-	public void setInvoice(double invoice) {
-		this.invoice = invoice;
-	}
-
-	public void setDeadlineDate(LocalDate deadlineDate) {
-		this.deadlineDate = deadlineDate;
-	}
-
-	public double getInvoice() {
-		return invoice;
+	public double getAmount() {
+		return amount;
 	}
 }

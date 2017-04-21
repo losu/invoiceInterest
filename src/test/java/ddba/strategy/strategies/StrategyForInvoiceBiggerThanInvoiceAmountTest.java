@@ -23,7 +23,7 @@ public class StrategyForInvoiceBiggerThanInvoiceAmountTest {
 		Tuple<Context, List<Output>> tuple = strategyForInvoiceBiggerThanInvoiceAmount.execute(context);
 
 		Assertions.assertThat(tuple.getLeft().getPayment()).isNull();
-		Assertions.assertThat(tuple.getLeft().getInvoice().getInvoice()).isEqualTo(500.0);
+		Assertions.assertThat(tuple.getLeft().getInvoice().getAmount()).isEqualTo(500.0);
 		Assertions.assertThat(tuple.getRight().stream().map(Output::getInterest)).containsExactly(0.58);
 	}
 }

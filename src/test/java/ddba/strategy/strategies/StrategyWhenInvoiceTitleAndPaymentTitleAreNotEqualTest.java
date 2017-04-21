@@ -12,7 +12,7 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.List;
 
-public class StrategyWhenThereIsNoPaymentTitleTest {
+public class StrategyWhenInvoiceTitleAndPaymentTitleAreNotEqualTest {
 
 	@Test
 	public void should() {
@@ -31,7 +31,7 @@ public class StrategyWhenThereIsNoPaymentTitleTest {
 		context.setInvoice(new Invoice("A", LocalDate.of(2000, 1, 10), 1000));
 		context.setPayment(new Payment("", LocalDate.of(2001, 1, 11), 500));
 		LocalDate now = LocalDate.of(2000, 1, 12);
-		StrategyWhenThereIsNoPaymentTitle strategy = new StrategyWhenThereIsNoPaymentTitle(payments,now);
+		StrategyWhenInvoiceTitleAndPaymentTitleAreNotEqual strategy = new StrategyWhenInvoiceTitleAndPaymentTitleAreNotEqual(payments,now);
 
 		Tuple<Context, List<Output>> tuple = strategy.execute(context);
 

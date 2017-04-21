@@ -67,7 +67,7 @@ public class StatutoryInterestTest {
 	@Parameters(method = "invoice")
 	public void shouldReturnTheCalculatedInterestWhichHasToBePaid(Invoice invoice, LocalDate paymentDate) {
 
-		double interest = InterestRate.InterestCalculator.calculateInterest(invoice.getDeadlineDate(), invoice.getInvoice(), paymentDate);
+		double interest = InterestRate.InterestCalculator.calculateInterest(invoice.getDeadlineDate(), invoice.getAmount(), paymentDate);
 		Assertions.assertThat(interest).isEqualTo(23.59);
 	}
 

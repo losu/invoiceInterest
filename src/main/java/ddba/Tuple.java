@@ -17,16 +17,16 @@ public class Tuple<L, R> {
 		return right;
 	}
 
-	@Override
-	public int hashCode() {
-		return left.hashCode() ^ right.hashCode();
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (!(o instanceof Tuple)) return false;
-		Tuple tuple = (Tuple) o;
-		return this.left.equals(tuple.getLeft()) &&
-				this.right.equals(tuple.getRight());
-	}
+//	@Override
+//	public int hashCode() {
+//		return left.hashCode() ^ right.hashCode();
+//	}
+//
+//	@Override
+//	public boolean equals(Object o) {
+//		if (!(o instanceof Tuple)) return false;
+//		Tuple tuple = (Tuple) o;
+//		return this.left.equals(tuple.getLeft()) &&
+//				this.right.equals(tuple.getRight());
+//	}
 }

@@ -17,6 +17,12 @@ import static java.time.temporal.ChronoUnit.DAYS;
 
 public class StrategyForEqualInvoiceAndPaymentAmount implements Strategy {
 
+	/**
+	 * Strategy destined for the case when payment and invoice are equal.
+	 *
+	 * @param context - contains information about payment and invoice
+	 * @return true if payment amount and invoice amount are equal, otherwise it is false
+	 */
 	@Override
 	public boolean canExecute(Context context) {
 		if (context.getInvoice() == null || context.getPayment() == null) {
@@ -24,25 +30,35 @@ public class StrategyForEqualInvoiceAndPaymentAmount implements Strategy {
 		}
 
 		List<LocalDate> dates = datesOfChangedInterestRate(context.getInvoice().getDeadlineDate(), context.getPayment().getPaymentDate());
-		if(!context.getInvoice().getInvoiceTitle().equals(context.getPayment().getPaymentTitle())) {
+		if (!context.getInvoice().getInvoiceTitle().equals(context.getPayment().getPaymentTitle())) {
 			return false;
 		}
-		return dates.isEmpty() && context.getInvoice().getInvoice() == context.getPayment().getPayment();
+		return dates.isEmpty() && context.getInvoice().getAmount() == context.getPayment().getAmount();
 	}
 
+	/**
+	 * Strategy destined for the case when payment and invoice are equal.
+	 *
+	 * @param context - contains information about payment and invoice
+	 * @return pair of values, context and list of outputs
+	 *
+	 *
+	 * @pre context cannot contain null values for either invoice or payment. Strategy is executed only
+	 * if both invoice are not null and the payment amount are equal.
+	 * @post returns new context with fields invoice and payment equal to null.
+	 */
 	@Override
 	public Tuple<Context, List<Output>> execute(Context context) {
 
 		List<Output> outputs = new LinkedList<>();
 
-		Output output = setupOutput(context.getInvoice(), context.getPayment(), context.getInvoice().getInvoice());
+		Output output = setupOutput(context.getInvoice(), context.getPayment(), context.getInvoice().getAmount());
 
 		outputs.add(output);
-		Context newContext = new Context();
-		return new Tuple<>(newContext, outputs);
+		return new Tuple<>(new Context(), outputs);
 	}
 
-	private  Output setupOutput(Invoice invoice, Payment payment, double invoiceTemp) {
+	private Output setupOutput(Invoice invoice, Payment payment, double invoiceTemp) {
 		Output output = new Output();
 		output.setDaysOverDeadline(DAYS.between(invoice.getDeadlineDate(), payment.getPaymentDate()));
 		output.setPeriod(payment.getPaymentDate().minusDays(output.getDaysOverDeadline()) + " - " + payment.getPaymentDate());
@@ -52,7 +68,7 @@ public class StrategyForEqualInvoiceAndPaymentAmount implements Strategy {
 		return output;
 	}
 
-	private  double calculateInterest(LocalDate deadlineDate, double invoice, LocalDate paymentDate) {
+	private double calculateInterest(LocalDate deadlineDate, double invoice, LocalDate paymentDate) {
 
 		double percentage = decideInterestPercentage(deadlineDate);
 		double annualInterest = invoice * percentage / 100;
@@ -68,5 +84,4 @@ public class StrategyForEqualInvoiceAndPaymentAmount implements Strategy {
 
 		return interest;
 	}
-
 }

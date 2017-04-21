@@ -6,18 +6,18 @@ public class Payment {
 
 	private String paymentTitle;
 	private LocalDate paymentDate;
-	private double payment;
+	private double amount;
 
-	public Payment(LocalDate paymentDate, double payment) {
+	public Payment(LocalDate paymentDate, double amount) {
 		this.paymentDate = paymentDate;
-		this.payment = payment;
+		this.amount = amount;
 		this.paymentTitle = "";
 	}
 
-	public Payment(String paymentTitle, LocalDate paymentDate, double payment) {
+	public Payment(String paymentTitle, LocalDate paymentDate, double amount) {
 		this.paymentTitle = paymentTitle;
 		this.paymentDate = paymentDate;
-		this.payment = payment;
+		this.amount = amount;
 	}
 
 	public String getPaymentTitle() {
@@ -28,11 +28,8 @@ public class Payment {
 		return paymentDate;
 	}
 
-	public double getPayment() {
-		return payment;
+	public double getAmount() {
+		return amount;
 	}
 
-	public void setPayment(double payment) {
-		this.payment = payment;
-	}
 }

@@ -17,6 +17,14 @@ import static java.time.temporal.ChronoUnit.DAYS;
 
 public class StrategyForMoreThanOneInterestPercentage implements Strategy {
 
+	/**
+	 * Strategy destined for more than one interest percentage.
+	 * <p>
+	 * It checks whether there are more interest rate changes between date of payment and the deadline.
+	 *
+	 * @param context - contains information about payment and invoice
+	 * @return if there is no additional interest rate changes then it returns false, else true
+	 */
 	@Override
 	public boolean canExecute(Context context) {
 		if (context.getInvoice() == null || context.getPayment() == null)
@@ -31,6 +39,18 @@ public class StrategyForMoreThanOneInterestPercentage implements Strategy {
 		return !dates.isEmpty();
 	}
 
+	/**
+	 * Strategy destined for more than one interest percentage.
+	 *
+	 * @param context - contains information about payment and invoice
+	 * @return pair of values, context and list of outputs
+	 *
+	 *
+	 * @pre context cannot contain null values for either invoice or payment. Strategy is executed only
+	 * if there are more interest rate between deadline and payment date.
+	 * @post returns context with invoice reduced by payment and payment field set to null or with invoiced reduced
+	 * by payment amount and payment set tu null.
+	 */
 	@Override
 	public Tuple<Context, List<Output>> execute(Context context) {
 
@@ -39,16 +59,17 @@ public class StrategyForMoreThanOneInterestPercentage implements Strategy {
 		outputs = generateOutputsForFakePayments(context);
 
 		Output output = setupOutput(
-				context.getInvoice(), context.getPayment(), context.getInvoice().getInvoice());
+				context.getInvoice(), context.getPayment());
 		outputs.add(output);
 
-		double diff = context.getInvoice().getInvoice() - context.getPayment().getPayment();
+		double diff = context.getInvoice().getAmount() - context.getPayment().getAmount();
 		Context newContext;
 		if (diff == 0.0) {
 			newContext = new Context();
 		} else {
+			Invoice invoice = new Invoice(context.getInvoice().getInvoiceTitle(),context.getInvoice().getDeadlineDate(), diff);
 			newContext = context;
-			newContext.getInvoice().setInvoice(diff);
+			newContext.setInvoice(invoice);
 			newContext.setPayment(null);
 		}
 
@@ -72,19 +93,27 @@ public class StrategyForMoreThanOneInterestPercentage implements Strategy {
 		List<Output> outputs = new LinkedList<>();
 		dates.forEach(date -> {
 			Payment payment = new Payment(date.minusDays(1), 0.0);
-			Output output = setupOutput(context.getInvoice(), payment, context.getInvoice().getInvoice());
-			context.getInvoice().setDeadlineDate(date);
+			Output output = setupOutput(context.getInvoice(), payment);
+			Invoice invoiceTemp = new Invoice(date,context.getInvoice().getAmount());
+			context.setInvoice(invoiceTemp);
 			outputs.add(output);
 		});
+
+
+		//  from the new set payment date it is necessary to add 1 day for proper calculation
+		LocalDate paymentDatePlusOneDay = context.getPayment().getPaymentDate();
+		paymentDatePlusOneDay = paymentDatePlusOneDay.plusDays(1);
+		Payment payment =  new Payment(paymentDatePlusOneDay,context.getPayment().getAmount());
+		context.setPayment(payment);
 		return outputs;
 	}
 
-	private Output setupOutput(Invoice invoice, Payment payment, double invoiceTemp) {
+	private Output setupOutput(Invoice invoice, Payment payment) {
 		Output output = new Output();
 		output.setDaysOverDeadline(DAYS.between(invoice.getDeadlineDate(), payment.getPaymentDate()));
 		output.setPeriod(payment.getPaymentDate().minusDays(output.getDaysOverDeadline()) + " - " + payment.getPaymentDate());
 		output.setInterestPercentage(decideInterestPercentage(invoice.getDeadlineDate()));
-		output.setInterest(calculateInterest(invoice.getDeadlineDate(), invoiceTemp, payment.getPaymentDate()));
+		output.setInterest(calculateInterest(invoice.getDeadlineDate(), invoice.getAmount(), payment.getPaymentDate()));
 
 		return output;
 	}

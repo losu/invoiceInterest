@@ -1,5 +1,6 @@
 package ddba.strategy;
 
+import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
 import ddba.InterestRate;
 import ddba.Invoice;
@@ -7,29 +8,32 @@ import ddba.Output;
 import ddba.Payment;
 import ddba.StatutoryInterest;
 import ddba.Tuple;
-import ddba.strategy.strategies.StrategyWhenThereIsNoPaymentTitle;
 import ddba.strategy.strategies.StrategyForEqualInvoiceAndPaymentAmount;
 import ddba.strategy.strategies.StrategyForInvoiceBiggerThanInvoiceAmount;
 import ddba.strategy.strategies.StrategyForMoreThanOneInterestPercentage;
 import ddba.strategy.strategies.StrategyForSettingNewValuesWhenFieldIsNull;
+import ddba.strategy.strategies.StrategyWhenInvoiceTitleAndPaymentTitleAreNotEqual;
 
 import java.time.LocalDate;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 public class InterestCalculation {
 
 	/**
 	 * it is overloaded method with added new additional parameter now
 	 * <p>
-	 * calculates the interest which has to be paid as a fee for the period od time between deadline and
-	 * be late actual date of payment.
+	 * calculates the collection of interests which has to be paid as a fee for the period od time between deadline and
+	 * be late actual date of payment. ???
 	 * <p>
 	 * Method takes two list of data. First one is the whole list of invoices which has to be paid. Second one
 	 * is a queue of payments which has information of amount of money paid and when it was paid
 	 *
+	 * @param invoice  - list of invoices to paid
 	 * @param invoice  - list of invoices to paid
 	 * @param payments - list of payments
 	 * @param now      - when there is now match for title of payment and invoice,
@@ -39,13 +43,21 @@ public class InterestCalculation {
 	 * @return list of Output object which represents period since when to when the payment was not paid, interest percentage
 	 * how many days and amount of interest
 	 */
-	static List<Output> strategyCalculateInterest(ArrayDeque<Invoice> invoice, ArrayDeque<Payment> payments, @Nullable LocalDate now) {
+	static @NotNull
+	List<Output> strategyCalculateInterest(@NotNull ArrayDeque<Invoice> invoice, @NotNull ArrayDeque<Payment> payments, @Nullable LocalDate now) {
+
+//		invoice = Optional.ofNullable(invoice).orElse(Collections.emptyIterator());
+//		payments = Optional.ofNullable(payments).orElse(new ArrayDeque<>());
+		invoice=Objects.requireNonNull(invoice);
+		payments=Objects.requireNonNull(payments);
 
 		List<Output> outputs = new LinkedList<>();
 
-		if(now == null){
-			now = LocalDate.now();
-		}
+		now = Optional.ofNullable(now).orElse(LocalDate.now());
+
+//		if(now == null){
+//			now = LocalDate.now();
+//		}
 
 		Context context = new Context();
 
@@ -55,7 +67,7 @@ public class InterestCalculation {
 		StrategyForEqualInvoiceAndPaymentAmount strategyForEqualInvoiceAndPaymentAmount = new StrategyForEqualInvoiceAndPaymentAmount();
 		StrategyForInvoiceBiggerThanInvoiceAmount strategyForInvoiceBiggerThanInvoiceAmount = new StrategyForInvoiceBiggerThanInvoiceAmount();
 		StrategyForMoreThanOneInterestPercentage strategyForMoreThanOneInterestPercentage = new StrategyForMoreThanOneInterestPercentage();
-		StrategyWhenThereIsNoPaymentTitle strategyWhenThereIsNoPaymentTitle = new StrategyWhenThereIsNoPaymentTitle(payments,now);
+		StrategyWhenInvoiceTitleAndPaymentTitleAreNotEqual strategyWhenThereIsNoPaymentTitle = new StrategyWhenInvoiceTitleAndPaymentTitleAreNotEqual(payments,now);
 
 		strategies.add(strategyForSettingNewValuesWhenFieldIsNull);
 		strategies.add(strategyForEqualInvoiceAndPaymentAmount);

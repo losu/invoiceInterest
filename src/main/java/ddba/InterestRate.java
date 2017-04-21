@@ -162,7 +162,7 @@ public class InterestRate {
 
 			List<Output> outputs = new LinkedList<>();
 			for (int i = 0; i < invoiceCopy.size(); i++) {
-				double invoiceTemp = invoice.getFirst().getInvoice();
+				double invoiceTemp = invoice.getFirst().getAmount();
 				double diff = 0.0;
 				for (int j = 0; j < paymentsCopy.size(); j++) {
 
@@ -171,7 +171,7 @@ public class InterestRate {
 						Payment payment = new Payment(date, 0.0);
 						paymentsCopy.add(j, payment);
 					}
-					diff = invoiceTemp - paymentsCopy.get(j).getPayment();
+					diff = invoiceTemp - paymentsCopy.get(j).getAmount();
 
 					if (diff < 0.0) {
 						break;
@@ -184,7 +184,7 @@ public class InterestRate {
 						if (diff == invoiceTemp) {
 							Output output = setupOutput(invoice.getFirst(), payment, invoiceTemp);
 							outputs.add(output);
-							double invoiceCost = invoiceCopy.get(i).getInvoice();
+							double invoiceCost = invoiceCopy.get(i).getAmount();
 							invoiceCopy.remove(i);
 							invoiceCopy.add(new Invoice(date, invoiceCost));
 							break;
@@ -192,7 +192,7 @@ public class InterestRate {
 
 						Output output = setupOutput(invoiceCopy.get(i), payment, invoiceTemp);
 						outputs.add(output);
-						invoiceTemp = invoiceTemp - payment.getPayment();
+						invoiceTemp = invoiceTemp - payment.getAmount();
 						//	}
 					}
 					if (paymentsCopy.size() - 1 == j && paymentsCopy.size() > 0 && invoiceCopy.size() > 0) {
@@ -232,7 +232,7 @@ public class InterestRate {
 
 			List<Output> outputs = new LinkedList<>();
 			for (int i = 0; i < invoiceCopy.size(); i++) {
-				double invoiceTemp = invoiceCopy.get(i).getInvoice();
+				double invoiceTemp = invoiceCopy.get(i).getAmount();
 				double diff = 0.0;
 				for (int j = 0; j < paymentsCopy.size(); j++) {
 
@@ -242,7 +242,7 @@ public class InterestRate {
 						paymentsCopy.add(j, payment);
 					}
 
-					diff = invoiceTemp - paymentsCopy.get(j).getPayment();
+					diff = invoiceTemp - paymentsCopy.get(j).getAmount();
 					if (diff < 0.0) {
 						break;
 					}
@@ -254,7 +254,7 @@ public class InterestRate {
 						if (diff == invoiceTemp) {
 							Output output = setupOutput(invoiceCopy.get(i), payment, invoiceTemp);
 							outputs.add(output);
-							double invoiceCost = invoiceCopy.get(i).getInvoice();
+							double invoiceCost = invoiceCopy.get(i).getAmount();
 							invoiceCopy.remove(i);
 							invoiceCopy.add(new Invoice(date, invoiceCost));
 							break;
@@ -262,7 +262,7 @@ public class InterestRate {
 
 						Output output = setupOutput(invoiceCopy.get(i), payment, invoiceTemp);
 						outputs.add(output);
-						invoiceTemp = invoiceTemp - payment.getPayment();
+						invoiceTemp = invoiceTemp - payment.getAmount();
 					}
 					if (paymentsCopy.size() - 1 == j && paymentsCopy.size() > 0 && invoiceCopy.size() > 0) {
 						j = -1;
